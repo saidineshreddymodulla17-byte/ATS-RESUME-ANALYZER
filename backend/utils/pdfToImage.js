@@ -1,36 +1,32 @@
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
-const pdfPoppler = require('pdf-poppler')
+const {createCanvas} = require('canvas')
 
 const convertPdfPageToImage = async pdfBuffer => {
-  const tempDir = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'resume-'),
-  )
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs')
 
-  const pdfPath = path.join(tempDir, 'resume.pdf')
+  pdfjsLib.GlobalWorkerOptions.workerSrc = null
 
-  fs.writeFileSync(pdfPath, pdfBuffer)
-
-  const options = {
-    format: 'png',
-    out_dir: tempDir,
-    out_prefix: 'page',
-    page: 1,
-  }
-
-  await pdfPoppler.convert(pdfPath, options)
-
-  const imagePath = path.join(tempDir, 'page-1.png')
-
-  const imageBuffer = fs.readFileSync(imagePath)
-
-  fs.rmSync(tempDir, {
-    recursive: true,
-    force: true,
+  const loadingTask = pdfjsLib.getDocument({
+    data: new Uint8Array(pdfBuffer),
   })
 
-  return imageBuffer
+  const pdf = await loadingTask.promise
+
+  const page = await pdf.getPage(1)
+
+  const viewport = page.getViewport({
+    scale: 2,
+  })
+
+  const canvas = createCanvas(viewport.width, viewport.height)
+
+  const context = canvas.getContext('2d')
+
+  await page.render({
+    canvasContext: context,
+    viewport,
+  }).promise
+
+  return canvas.toBuffer('image/png')
 }
 
 module.exports = {
