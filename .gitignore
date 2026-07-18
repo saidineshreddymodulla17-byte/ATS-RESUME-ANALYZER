@@ -1,0 +1,21 @@
+# Node Modules
+backend/node_modules/
+ats-resume-analyzer/node_modules/
+
+# Environment Variables
+backend/.env
+ats-resume-analyzer/.env
+
+# Vite Build
+ats-resume-analyzer/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
