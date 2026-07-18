@@ -41,7 +41,7 @@ const Analysis = () => {
         const token = localStorage.getItem('token')
 
         const response = await fetch(
-          `http://localhost:5000/api/resumes/${id}`,
+          `https://ats-resume-analyzer-backend-nel5.onrender.com/api/resumes/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

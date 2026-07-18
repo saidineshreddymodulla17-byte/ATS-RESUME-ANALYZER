@@ -26,7 +26,7 @@ const History = () => {
       const token = localStorage.getItem('token')
 
       const response = await fetch(
-        'http://localhost:5000/api/resumes/history',
+        'https://ats-resume-analyzer-backend-nel5.onrender.com/api/resumes/history',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,7 +52,7 @@ const History = () => {
     const token = localStorage.getItem('token')
 
     const response = await fetch(
-      `http://localhost:5000/api/resumes/${id}`,
+      `https://ats-resume-analyzer-backend-nel5.onrender.com/api/resumes/${id}`,
       {
         method: 'DELETE',
         headers: {
