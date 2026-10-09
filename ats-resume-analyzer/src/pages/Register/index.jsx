@@ -38,7 +38,7 @@ const Register = () => {
       setIsLoading(true)
 
       const response = await fetch(
-        'http://https://ats-resume-analyzer-backendupdated.onrender.com/api/auth/register',
+        'https://ats-resume-analyzer-backendupdated.onrender.com/api/auth/register',
         {
           method: 'POST',
 

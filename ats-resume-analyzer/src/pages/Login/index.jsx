@@ -23,7 +23,7 @@ const Login = () => {
       setIsLoading(true)
 
       const response = await fetch(
-       'http://https://ats-resume-analyzer-backendupdated.onrender.com/api/auth/login',
+       'https://ats-resume-analyzer-backendupdated.onrender.com/api/auth/login',
         {
           method: 'POST',
           headers: {

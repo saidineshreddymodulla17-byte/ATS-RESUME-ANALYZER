@@ -17,7 +17,7 @@ import {
 
 import DashboardLayout from '../../components/DashboardLayout'
 
-const API_URL = 'http://https://ats-resume-analyzer-backendupdated.onrender.com'
+const API_URL = 'https://ats-resume-analyzer-backendupdated.onrender.com'
 
 // =========================================================
 // SCORE RING
