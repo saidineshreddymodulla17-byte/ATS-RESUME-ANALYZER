@@ -24,46 +24,40 @@ const analysisSchema = new mongoose.Schema(
       required: true,
     },
 
-    atsScore: {
-      type: Number,
-      required: true,
-    },
+    // =====================================================
+    // Gemini AI Resume Analysis
+    // =====================================================
 
-    keywordMatch: {
-      type: Number,
-      required: true,
-    },
+    aiAnalysis: {
+      semanticScore: {
+        type: Number,
+        default: 0,
+      },
 
-    // NEW
-    resumeQuality: {
-      type: Number,
-      default: 0,
-    },
+      summary: {
+        type: String,
+        default: '',
+      },
 
-    matchedSkills: {
-      type: [String],
-      default: [],
-    },
+      strengths: {
+        type: [String],
+        default: [],
+      },
 
-    missingSkills: {
-      type: [String],
-      default: [],
-    },
+      weaknesses: {
+        type: [String],
+        default: [],
+      },
 
-    // NEW
-    suggestions: {
-      type: [String],
-      default: [],
-    },
+      skillGaps: {
+        type: [String],
+        default: [],
+      },
 
-    totalMatchedSkills: {
-      type: Number,
-      default: 0,
-    },
-
-    totalMissingSkills: {
-      type: Number,
-      default: 0,
+      suggestions: {
+        type: [String],
+        default: [],
+      },
     },
   },
   {

@@ -7,6 +7,7 @@ import {
   FiArrowRight,
   FiBriefcase,
   FiInfo,
+  FiZap,
 } from 'react-icons/fi'
 
 import DashboardLayout from '../../components/DashboardLayout'
@@ -20,17 +21,21 @@ const UploadResume = () => {
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
 
+  // -----------------------------
+  // Validate and select resume
+  // -----------------------------
   const validateAndSetFile = file => {
     if (!file) {
       return
     }
 
-    // Currently, the backend supports only PDF files
+    // Only PDF files are supported
     if (file.type !== 'application/pdf') {
       alert('Please upload only a PDF file.')
       return
     }
 
+    // Maximum file size: 5 MB
     const maximumFileSize = 5 * 1024 * 1024
 
     if (file.size > maximumFileSize) {
@@ -41,11 +46,17 @@ const UploadResume = () => {
     setResume(file)
   }
 
+  // -----------------------------
+  // File input
+  // -----------------------------
   const handleFileChange = event => {
     const file = event.target.files[0]
     validateAndSetFile(file)
   }
 
+  // -----------------------------
+  // Drag and drop
+  // -----------------------------
   const handleDragOver = event => {
     event.preventDefault()
     setIsDragging(true)
@@ -64,6 +75,9 @@ const UploadResume = () => {
     validateAndSetFile(file)
   }
 
+  // -----------------------------
+  // Remove selected resume
+  // -----------------------------
   const removeResume = () => {
     setResume(null)
 
@@ -72,6 +86,9 @@ const UploadResume = () => {
     }
   }
 
+  // -----------------------------
+  // Analyze resume with Gemini
+  // -----------------------------
   const handleAnalyze = async event => {
     event.preventDefault()
 
@@ -105,13 +122,13 @@ const UploadResume = () => {
       formData.append('resume', resume)
       formData.append('jobDescription', jobDescription)
 
-      console.log('Sending request to backend...')
+      console.log('Sending resume to Gemini AI analysis...')
       console.log('Resume file:', resume.name)
       console.log('Resume size:', resume.size)
       console.log('Job description length:', jobDescription.length)
 
       const response = await fetch(
-        'https://ats-resume-analyzer-backend-nel5.onrender.com/api/resumes/upload',
+        'http://localhost:5000/api/resumes/upload',
         {
           method: 'POST',
 
@@ -127,36 +144,33 @@ const UploadResume = () => {
 
       const data = await response.json()
 
-      console.log('Complete backend response:', data)
-
-      if (data.resumeText) {
-        console.log('\n========== EXTRACTED RESUME TEXT ==========\n')
-        console.log(data.resumeText)
-        console.log('\n===========================================\n')
-      } else {
-        console.log('No resumeText received from backend')
-      }
+      console.log('Gemini analysis response:', data)
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to upload resume')
+        throw new Error(data.message || 'Failed to analyze resume')
       }
 
-      alert(data.message)
+      alert(data.message || 'Resume analyzed successfully')
 
+      // Send the complete AI analysis response
+      // to the Analysis page.
       navigate('/analysis', {
         state: {
           uploadData: data,
         },
       })
     } catch (error) {
-      console.error('Resume upload error:', error)
+      console.error('Resume analysis error:', error)
 
-      alert(error.message)
+      alert(error.message || 'Something went wrong while analyzing the resume.')
     } finally {
       setIsLoading(false)
     }
   }
 
+  // -----------------------------
+  // Format file size
+  // -----------------------------
   const formatFileSize = bytes => {
     return (bytes / (1024 * 1024)).toFixed(2)
   }
@@ -164,9 +178,11 @@ const UploadResume = () => {
   return (
     <DashboardLayout>
       <div className="mx-auto max-w-5xl">
+
+        {/* Header */}
         <div>
           <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
-            Resume Analysis
+            Gemini AI Analysis
           </p>
 
           <h1 className="mt-2 text-3xl font-bold text-slate-900">
@@ -174,15 +190,19 @@ const UploadResume = () => {
           </h1>
 
           <p className="mt-2 max-w-2xl text-slate-600">
-            Upload your resume and paste the target job description to get your
-            ATS score, keyword matches, missing skills, and AI-powered
-            recommendations.
+            Upload your resume and paste the target job description to get a
+            Gemini-powered semantic match score, strengths, weaknesses,
+            skill gaps, and personalized recommendations.
           </p>
         </div>
 
         <form onSubmit={handleAnalyze} className="mt-8 space-y-6">
+
+          {/* Resume Upload */}
           <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+
             <div className="flex items-start gap-4">
+
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-600">
                 <FiFileText />
               </div>
@@ -196,6 +216,7 @@ const UploadResume = () => {
                   Supported format: PDF. Maximum file size: 5 MB.
                 </p>
               </div>
+
             </div>
 
             {!resume ? (
@@ -209,6 +230,7 @@ const UploadResume = () => {
                     : 'border-slate-300 bg-slate-50 hover:border-blue-400 hover:bg-blue-50/50'
                 }`}
               >
+
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-3xl text-blue-600">
                   <FiUploadCloud />
                 </div>
@@ -236,9 +258,11 @@ const UploadResume = () => {
                 >
                   Choose Resume
                 </button>
+
               </div>
             ) : (
               <div className="mt-6 flex items-center gap-4 rounded-2xl border border-green-200 bg-green-50 p-5">
+
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-100 text-xl text-green-600">
                   <FiFileText />
                 </div>
@@ -249,7 +273,7 @@ const UploadResume = () => {
                   </p>
 
                   <p className="mt-1 text-sm text-slate-500">
-                    {formatFileSize(resume.size)} MB • Ready for analysis
+                    {formatFileSize(resume.size)} MB • Ready for Gemini analysis
                   </p>
                 </div>
 
@@ -261,12 +285,17 @@ const UploadResume = () => {
                 >
                   <FiX />
                 </button>
+
               </div>
             )}
+
           </section>
 
+          {/* Job Description */}
           <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+
             <div className="flex items-start gap-4">
+
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-xl text-purple-600">
                 <FiBriefcase />
               </div>
@@ -281,50 +310,73 @@ const UploadResume = () => {
                   applying to.
                 </p>
               </div>
+
             </div>
 
             <textarea
               value={jobDescription}
               onChange={event => setJobDescription(event.target.value)}
               rows="12"
-              placeholder="Paste the job description here...
+              placeholder={`Paste the job description here...
 
 Example:
 
-We are looking for a Software Engineer with experience in React, Node.js, MongoDB, REST APIs, Git, and cloud technologies..."
+We are looking for a Software Engineer with experience in React, Node.js, MongoDB, REST APIs, Git, cloud technologies, Python, and Generative AI...`}
               className="mt-6 w-full resize-none rounded-2xl border border-slate-300 bg-slate-50 p-5 text-sm leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
             />
 
             <div className="mt-3 flex items-center justify-between text-xs text-slate-400">
+
               <span>
                 Include responsibilities, requirements, and preferred skills.
               </span>
 
-              <span>{jobDescription.length} characters</span>
+              <span>
+                {jobDescription.length} characters
+              </span>
+
             </div>
+
           </section>
 
+          {/* Gemini AI Information */}
           <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4">
-            <FiInfo className="mt-0.5 shrink-0 text-blue-600" />
+
+            <FiZap className="mt-0.5 shrink-0 text-blue-600" />
 
             <p className="text-sm leading-6 text-blue-700">
-              Your resume will be compared against the job description to
-              calculate keyword compatibility and generate AI-powered
-              improvement suggestions.
+              Gemini AI will analyze your resume against the job description
+              and identify semantic alignment, strengths, weaknesses, skill
+              gaps, and personalized improvement recommendations.
             </p>
+
           </div>
 
+          {/* Analyze Button */}
           <div className="flex justify-end">
+
             <button
               type="submit"
               disabled={isLoading}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400 sm:w-auto"
             >
-              {isLoading ? 'Uploading...' : 'Analyze My Resume'}
 
-              {!isLoading && <FiArrowRight />}
+              {isLoading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Analyzing with Gemini...
+                </>
+              ) : (
+                <>
+                  Analyze with Gemini
+                  <FiArrowRight />
+                </>
+              )}
+
             </button>
+
           </div>
+
         </form>
       </div>
     </DashboardLayout>

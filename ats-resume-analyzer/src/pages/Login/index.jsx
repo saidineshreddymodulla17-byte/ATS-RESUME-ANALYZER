@@ -23,7 +23,7 @@ const Login = () => {
       setIsLoading(true)
 
       const response = await fetch(
-       'https://ats-resume-analyzer-backend-nel5.onrender.com/api/auth/login',
+       'http://localhost:5000/api/auth/login',
         {
           method: 'POST',
           headers: {
