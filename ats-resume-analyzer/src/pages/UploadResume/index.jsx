@@ -128,7 +128,7 @@ const UploadResume = () => {
       console.log('Job description length:', jobDescription.length)
 
       const response = await fetch(
-        'http://localhost:5000/api/resumes/upload',
+        'http://https://ats-resume-analyzer-backendupdated.onrender.com/api/resumes/upload',
         {
           method: 'POST',
 

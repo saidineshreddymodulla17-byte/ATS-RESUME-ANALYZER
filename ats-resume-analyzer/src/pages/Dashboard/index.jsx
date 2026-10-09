@@ -52,7 +52,7 @@ const Dashboard = () => {
         }
 
         const response = await fetch(
-          'http://localhost:5000/api/resumes/history',
+          'http://https://ats-resume-analyzer-backendupdated.onrender.com/api/resumes/history',
           {
             method: 'GET',
             headers: {
